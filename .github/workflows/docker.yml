@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 env:
   DOCKER_USER:                 "pandemonium1986"
-  DOCKER_IMAGE:                "ubuntu1804"
+  DOCKER_IMAGE:                "ubuntu2004"
 
 jobs:
   lint:
