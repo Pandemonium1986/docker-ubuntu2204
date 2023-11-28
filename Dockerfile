@@ -1,7 +1,7 @@
 FROM ubuntu:focal
 
 LABEL maintainer="Michael Maffait"
-LABEL org.opencontainers.image.source="https://github.com/Pandemonium1986/docker-ubuntu2004"
+LABEL org.opencontainers.image.source="https://github.com/Pandemonium1986/docker-ubuntu2204"
 
 # Install dependencies.
 RUN apt-get update && \

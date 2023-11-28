@@ -1,9 +1,9 @@
 ---
-name:                          "docker"
+name: "Docker Workflow"
 
 on:
   schedule:
-    - cron:                    "0 8 * * *"
+    - cron: "0 8 * * *"
   push:
     branches:
       - main
@@ -12,67 +12,16 @@ on:
       - "*"
   workflow_dispatch:
 
-env:
-  DOCKER_USER:                 "pandemonium1986"
-  DOCKER_IMAGE:                "ubuntu2004"
-
 jobs:
-  lint:
-    name:                      "GitHub => Super Linter"
-    runs-on:                   ubuntu-latest
-    steps:
-    - name:                    "Init => Run checkout@v2"
-      uses:                    actions/checkout@v4
-      with:
-        fetch-depth:           0
-    - name:                    "Prepare => Get the current branch"
-      run:                     echo CURRENT_BRANCH=${GITHUB_REF/refs\/heads\//} >> $GITHUB_ENV
-    - name:                    "Prepare => Get the current tag"
-      if:                      ${{ github.event_name == 'release' }}
-      run:                     echo CURRENT_BRANCH=${GITHUB_REF/refs\/tags\//} >> $GITHUB_ENV
-    - name:                    "GitHub => Lint Dockerfile"
-      uses:                    github/super-linter@v4
-      env:
-        VALIDATE_ALL_CODEBASE: false
-        DEFAULT_BRANCH:        ${{ env.CURRENT_BRANCH }}
-        LINTER_RULES_PATH:     "."
-  docker:
-    name:                      "Docker => Build and Push"
-    runs-on:                   ubuntu-latest
-    needs:
-      - lint
-    steps:
-      - name:                  "Init => Checkout"
-        uses:                  actions/checkout@v4
-      - name:                  "Prepare => Docker meta"
-        id:                    docker_meta
-        uses:                  docker/metadata-action@v5
-        with:
-          images:              ghcr.io/${{ env.DOCKER_USER }}/${{ env.DOCKER_IMAGE }}
-          tags:                |
-            type=schedule,pattern=nightly
-            type=ref,event=branch
-            type=semver,pattern={{ version }}
-      - name:                  "Docker => Login to GitHub Container Registry"
-        uses:                  docker/login-action@v3
-        with:
-          registry:            ghcr.io
-          username:            ${{ github.repository_owner }}
-          password:            ${{ secrets.GITHUB_TOKEN }}
-      - name:                  "Docker => Set up Docker Buildx"
-        id:                    buildx
-        uses:                  docker/setup-buildx-action@v3
-        with:
-          version:             latest
-      - name:                  "Docker => Build and push"
-        id:                    docker_build
-        uses:                  docker/build-push-action@v5
-        with:
-          context:             .
-          file:                ./Dockerfile
-          platforms:           linux/amd64
-          push:                true
-          tags:                ${{ steps.docker_meta.outputs.tags }}
-          labels:              ${{ steps.docker_meta.outputs.labels }}
-      - name:                  "Docker => Image digest"
-        run:                   echo ${{ steps.docker_build.outputs.digest }}
+  called-docker:
+    permissions:
+      contents: read
+      packages: write
+      statuses: write
+    name: "Called: Docker Build and Push Workflow"
+    uses: pandemonium1986/.github/.github/workflows/called-docker.yml@main
+    with:
+      docker-user: ${{ github.repository_owner }}
+      docker-image: ${{ github.event.repository.name }}
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
