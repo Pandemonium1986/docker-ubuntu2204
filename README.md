@@ -6,7 +6,7 @@
 ![license](https://img.shields.io/github/license/Pandemonium1986/docker-ubuntu2204)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
-Ubuntu 20.04 docker base image. Built to be able to test playbooks and Ansible roles as if you were on an operating system with **systemd**.
+Ubuntu 22.04 docker base image. Built to be able to test playbooks and Ansible roles as if you were on an operating system with **systemd**.
 
 ## Tags
 
