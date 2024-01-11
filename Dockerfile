@@ -8,8 +8,11 @@ ENV LC_ALL=en_US.UTF-8
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US.UTF-8
 ENV PYTHONIOENCODING=utf8
-ENV container=docker
 ARG DEBIAN_FRONTEND=noninteractive
+
+# Systemd configuration
+STOPSIGNAL SIGRTMIN+3
+ENV container=docker
 
 # Install dependencies
 RUN apt-get update && \
@@ -41,6 +44,6 @@ RUN ls /lib/systemd/system/sysinit.target.wants/ | grep -v systemd-tmpfiles-setu
 
 WORKDIR /
 
-VOLUME ["/sys/fs/cgroup"]
+VOLUME [ "/tmp", "/run" ]
 
 CMD ["/lib/systemd/systemd"]
